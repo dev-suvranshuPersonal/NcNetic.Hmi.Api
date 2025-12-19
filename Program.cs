@@ -16,6 +16,7 @@ namespace NcNetic.Hmi.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddSingleton<TimeLoggerService>();
+            builder.WebHost.UseUrls("http://192.168.1.200:7033");
 
             var app = builder.Build();
 
