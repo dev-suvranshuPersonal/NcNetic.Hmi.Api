@@ -7,17 +7,17 @@ namespace NcNetic.Hmi.Api.Controllers
     [Route("api/hmi/timelogger")]
     public class TimeLoggerController : ControllerBase
     {
-        private readonly TimeLoggerService _service;
+        private readonly ITimeLoggerService _timeLoggerService;
 
-        public TimeLoggerController(TimeLoggerService service)
+        public TimeLoggerController(ITimeLoggerService timeLoggerService)
         {
-            _service = service;
+            _timeLoggerService = timeLoggerService;
         }
 
         [HttpGet("daily-summary")]
-        public IActionResult GetDailySummary()
+        public async Task<IActionResult> GetDailySummary()
         {
-            var data = _service.GetDailySummary();
+            var data = await _timeLoggerService.GetDailySummaryAsync();
             return Ok(data);
         }
     }

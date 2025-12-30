@@ -1,49 +1,65 @@
 ﻿using System.Data.OleDb;
+using Microsoft.Extensions.Configuration;
 using NcNetic.Hmi.Api.Models;
 
 namespace NcNetic.Hmi.Api.Services
 {
-    public class TimeLoggerService
+    public class TimeLoggerService : ITimeLoggerService
     {
-        private static readonly string ConnStr =
-        @"Provider=Microsoft.ACE.OLEDB.12.0;
-          Data Source=D:\Projects\HMI_Beta_NcNetic\TimeLogger.mdb;
-          Jet OLEDB:Database Password=M1nTime$2025*LcM;
-          Persist Security Info=False;";
+        private readonly string _connectionString;
 
-
-        public List<MachineSummaryDto> GetDailySummary()
+        public TimeLoggerService(IConfiguration configuration)
         {
-            var list = new List<MachineSummaryDto>();
+            _connectionString = configuration.GetConnectionString("TimeLoggerDb")
+                ?? throw new InvalidOperationException("TimeLoggerDb connection string not found.");
+        }
 
-            using var conn = new OleDbConnection(ConnStr);
-            using var cmd = new OleDbCommand(
-                @"SELECT SummaryDate,
-                         OnSeconds,
-                         LaserOnSeconds,
-                         CuttingSeconds,
-                         ErrorSeconds,
-                         UtilizationPct
-                  FROM MachineDailySummary
-                  ORDER BY SummaryDate DESC", conn);
+        public async Task<IReadOnlyList<MachineSummaryDto>> GetDailySummaryAsync()
+        {
+            var result = new List<MachineSummaryDto>();
 
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
+            const string query = @"
+                SELECT 
+                    SummaryDate,
+                    OnSeconds,
+                    LaserOnSeconds,
+                    CuttingSeconds,
+                    ErrorSeconds,
+                    UtilizationPct
+                FROM MachineDailySummary
+                ORDER BY SummaryDate DESC";
 
-            while (reader.Read())
+            try
             {
-                list.Add(new MachineSummaryDto
+                using var connection = new OleDbConnection(_connectionString);
+                using var command = new OleDbCommand(query, connection);
+
+                await connection.OpenAsync();
+
+                using var reader = await command.ExecuteReaderAsync();
+
+                if (reader == null)
+                    return result;
+
+                while (await reader.ReadAsync())
                 {
-                    SummaryDate = DateOnly.FromDateTime(reader.GetDateTime(0)),
-                    OnSeconds = reader.IsDBNull(1) ? 0 : reader.GetDouble(1),
-                    LaserOnSeconds = reader.IsDBNull(2) ? 0 : reader.GetDouble(2),
-                    CuttingSeconds = reader.IsDBNull(3) ? 0 : reader.GetDouble(3),
-                    ErrorSeconds = reader.IsDBNull(4) ? 0 : reader.GetDouble(4),
-                    UtilizationPct = reader.IsDBNull(5) ? 0 : reader.GetDouble(5),
-                });
+                    result.Add(new MachineSummaryDto
+                    {
+                        SummaryDate = DateOnly.FromDateTime(reader.GetDateTime(0)),
+                        OnSeconds = reader.IsDBNull(1) ? 0 : Convert.ToDouble(reader[1]),
+                        LaserOnSeconds = reader.IsDBNull(2) ? 0 : Convert.ToDouble(reader[2]),
+                        CuttingSeconds = reader.IsDBNull(3) ? 0 : Convert.ToDouble(reader[3]),
+                        ErrorSeconds = reader.IsDBNull(4) ? 0 : Convert.ToDouble(reader[4]),
+                        UtilizationPct = reader.IsDBNull(5) ? 0 : Convert.ToDouble(reader[5])
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to load machine daily summary.", ex);
             }
 
-            return list;
+            return result;
         }
     }
 }
