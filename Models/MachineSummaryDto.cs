@@ -2,6 +2,7 @@
 {
     public class MachineSummaryDto
     {
+        public string SerialNo { get; set; } = string.Empty;
         public DateOnly SummaryDate { get; set; }
         public double OnSeconds { get; set; }
         public double LaserOnSeconds { get; set; }

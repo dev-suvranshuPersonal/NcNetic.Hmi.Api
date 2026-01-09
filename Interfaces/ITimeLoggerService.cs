@@ -1,6 +1,6 @@
 ﻿using NcNetic.Hmi.Api.Models;
 
-namespace NcNetic.Hmi.Api.Services
+namespace NcNetic.Hmi.Api.Interfaces
 {
     public interface ITimeLoggerService
     {

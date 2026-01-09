@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NcNetic.Hmi.Api.Services;
+using NcNetic.Hmi.Api.Interfaces;
 
 namespace NcNetic.Hmi.Api.Controllers
 {
