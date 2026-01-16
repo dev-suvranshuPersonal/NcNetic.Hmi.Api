@@ -1,8 +1,8 @@
 ﻿using System.Data.OleDb;
-using NcNetic.Hmi.Api.Interfaces;
-using NcNetic.Hmi.Api.Models;
+using SilHmiApi.Interfaces;
+using SilHmiApi.Models;
 
-namespace NcNetic.Hmi.Api.Services
+namespace SilHmiApi.Services
 {
     public class TimeLoggerService : ITimeLoggerService
     {
@@ -63,6 +63,48 @@ namespace NcNetic.Hmi.Api.Services
                 throw new ApplicationException("Failed to load machine daily summary.", ex);
             }
 
+            return result;
+        }
+        public async Task<IReadOnlyList<MachineTimeSnapshots>> GetMachineTimeSnapshotsAsync(DateTime lastSnapshotTime)
+        {
+            var result = new List<MachineTimeSnapshots>();
+            var serialNo = await _machineInfoService.GetMachineSerialNoAsync();
+            const string query = @"
+                SELECT 
+                    SnapshotTime,
+                    TotalOnSeconds,
+                    TotalLaserOnSeconds,
+                    ActualProcessSeconds,
+                    TotalErrorSeconds
+                FROM MachineTimeSnapshots
+                WHERE SnapshotTime >= ?
+                ORDER BY SnapshotTime ASC";
+            try
+            {
+                using var connection = new OleDbConnection(_connectionString);
+                using var command = new OleDbCommand(query, connection);
+                command.Parameters.AddWithValue("?", lastSnapshotTime);
+                await connection.OpenAsync();
+                using var reader = await command.ExecuteReaderAsync();
+                if (reader == null)
+                    return result;
+                while (await reader.ReadAsync())
+                {
+                    result.Add(new MachineTimeSnapshots
+                    {
+                        SerialNo = serialNo,
+                        snapshot_time = reader.GetDateTime(0),
+                        total_on_seconds = reader.IsDBNull(1) ? 0 : Convert.ToDouble(reader[1]),
+                        total_laser_on_seconds = reader.IsDBNull(2) ? 0 : Convert.ToDouble(reader[2]),
+                        actual_process_seconds = reader.IsDBNull(3) ? 0 : Convert.ToDouble(reader[3]),
+                        total_error_seconds = reader.IsDBNull(4) ? 0 : Convert.ToDouble(reader[4])
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to load machine time snapshots.", ex);
+            }
             return result;
         }
     }

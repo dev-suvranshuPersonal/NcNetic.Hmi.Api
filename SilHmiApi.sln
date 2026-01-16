@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36408.4 d17.14
+VisualStudioVersion = 17.14.36408.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NcNetic.Hmi.Api", "NcNetic.Hmi.Api.csproj", "{337C4509-935E-4D5D-B41C-71B656E35EE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilHmiApi", "SilHmiApi.csproj", "{337C4509-935E-4D5D-B41C-71B656E35EE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

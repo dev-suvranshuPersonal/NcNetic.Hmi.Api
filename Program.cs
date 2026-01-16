@@ -1,6 +1,6 @@
-﻿using NcNetic.Hmi.Api.Interfaces;
-using NcNetic.Hmi.Api.Services;
-using NcNetic.Hmi.Api.Workers;
+﻿using SilHmiApi.Interfaces;
+using SilHmiApi.Services;
+using SilHmiApi.Workers;
 
 namespace NcNetic.Hmi.Api
 {
@@ -8,7 +8,12 @@ namespace NcNetic.Hmi.Api
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+            {
+                Args = args,
+                ContentRootPath = AppContext.BaseDirectory
+            });
+
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -18,6 +23,9 @@ namespace NcNetic.Hmi.Api
             builder.Services.AddScoped<IMachineInfoService, MachineInfoService>();
             builder.Services.AddScoped<ICloudSyncService, CloudSyncService>();
             builder.Services.AddHostedService<CloudSyncWorker>();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
 
 
 

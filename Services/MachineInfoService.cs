@@ -1,7 +1,7 @@
-﻿using NcNetic.Hmi.Api.Interfaces;
+﻿using SilHmiApi.Interfaces;
 using System.Data.OleDb;
 
-namespace NcNetic.Hmi.Api.Services
+namespace SilHmiApi.Services
 {
     public class MachineInfoService : IMachineInfoService
     {

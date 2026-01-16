@@ -1,4 +1,4 @@
-﻿namespace NcNetic.Hmi.Api.Interfaces
+﻿namespace SilHmiApi.Interfaces
 {
     public interface IMachineInfoService
     {

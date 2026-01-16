@@ -1,9 +1,10 @@
-﻿using NcNetic.Hmi.Api.Models;
+﻿using SilHmiApi.Models;
 
-namespace NcNetic.Hmi.Api.Interfaces
+namespace SilHmiApi.Interfaces
 {
     public interface ITimeLoggerService
     {
         Task<IReadOnlyList<MachineSummaryDto>> GetDailySummaryAsync();
+        Task<IReadOnlyList<MachineTimeSnapshots>> GetMachineTimeSnapshotsAsync(DateTime lastSnapshotTime);
     }
 }

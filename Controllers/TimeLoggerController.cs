@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NcNetic.Hmi.Api.Interfaces;
+using SilHmiApi.Interfaces;
 
 namespace NcNetic.Hmi.Api.Controllers
 {
@@ -18,6 +18,12 @@ namespace NcNetic.Hmi.Api.Controllers
         public async Task<IActionResult> GetDailySummary()
         {
             var data = await _timeLoggerService.GetDailySummaryAsync();
+            return Ok(data);
+        }
+        [HttpGet("machine-time-snapshots")]
+        public async Task<IActionResult> GetMachineTimeSnapshots([FromQuery] DateTime fromDate)
+        {
+            var data = await _timeLoggerService.GetMachineTimeSnapshotsAsync(fromDate);
             return Ok(data);
         }
     }

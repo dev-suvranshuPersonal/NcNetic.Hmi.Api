@@ -10,6 +10,7 @@
     <PackageReference Include="EntityFrameworkCore.Jet.OleDb" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.1" />
     <PackageReference Include="MySql.Data" Version="8.0.11" />
+    <PackageReference Include="MySqlConnector" Version="2.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="WindowsServiceFramework.Extensions" Version="2018.10.15.14" />
   </ItemGroup>

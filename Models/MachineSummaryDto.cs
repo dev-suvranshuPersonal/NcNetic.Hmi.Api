@@ -1,4 +1,4 @@
-﻿namespace NcNetic.Hmi.Api.Models
+﻿namespace SilHmiApi.Models
 {
     public class MachineSummaryDto
     {
